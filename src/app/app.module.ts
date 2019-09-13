@@ -1,3 +1,6 @@
+import { AuthGuard } from './core/auth.guard';
+import { AuthService } from './auth.service';
+import { UserService } from './user.service';
 import { TumblrComponent } from './donnees/ApplicationSocial/tumblr/tumblr.component';
 import { FacebookLiteComponent } from './donnees/ApplicationSocial/facebook-lite/facebook-lite.component';
 import { MessengerLiteComponent } from './donnees/ApplicationSocial/messenger-lite/messenger-lite.component';
@@ -20,6 +23,12 @@ import { MessagesComponent } from './donnees/messages/messages.component';
 import { RouterModule } from '@angular/router';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
+//import { AngularFireModule } from '@angular/fire';
+import {AngularFirestoreModule} from "@angular/fire/firestore";
+import {AngularFireAuthModule} from "@angular/fire/auth";
+import { environment } from '../environments/environment';
+import { HttpClientModule } from '@angular/common/http';
+
 
 import { AppRoutingModule, RoutingCompenents } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -27,26 +36,28 @@ import { DashbordComponent } from './dashbord/dashbord.component';
 import { CalendrierComponent } from './calendrier/calendrier.component';
 import { AlerteComponent } from './alerte/alerte.component';
 import { CompteComponent } from './compte/compte.component';
-import { AppelsComponent } from './Donnees/appels/appels.component';
-import { PositionsComponent } from './Donnees/positions/positions.component';
-import { GeofencingComponent } from './Donnees/geofencing/geofencing.component';
-import { PrendreCapEcranComponent } from './Donnees/prendre-cap-ecran/prendre-cap-ecran.component';
-import { CaptureIntelligenteComponent } from './Donnees/capture-intelligente/capture-intelligente.component';
-import { PhotosComponent } from './Donnees/photos/photos.component';
-import { ApercuVideoComponent } from './Donnees/apercu-video/apercu-video.component';
-import { VoixComponent } from './Donnees/voix/voix.component';
-import { DocumentsComponent } from './Donnees/documents/documents.component';
-import { EmailComponent } from './Donnees/email/email.component';
-import { ContactsComponent } from './Donnees/contacts/contacts.component';
-import { HistoriqueComponent } from './Donnees/historique/historique.component';
-import { PressePapiersComponent } from './Donnees/presse-papiers/presse-papiers.component';
-import { EnregistreurWifiComponent } from './Donnees/enregistreur-wifi/enregistreur-wifi.component';
-import { AppBlockComponent } from './Donnees/app-block/app-block.component';
-import { TempsDarretComponent } from './Donnees/temps-darret/temps-darret.component';
-import { ActiviteDapplicationComponent } from './Donnees/activite-dapplication/activite-dapplication.component';
-import { ApplicationSocialComponent } from './Donnees/application-social/application-social.component';
-import { WhatsappComponent } from './Donnees/ApplicationSocial/whatsapp/whatsapp.component';
-import { FichiersDeWhatsappComponent } from './Donnees/ApplicationSocial/fichiers-de-whatsapp/fichiers-de-whatsapp.component';
+import { AppelsComponent } from './donnees/appels/appels.component';
+import { PositionsComponent } from './donnees/positions/positions.component';
+import { GeofencingComponent } from './donnees/geofencing/geofencing.component';
+import { PrendreCapEcranComponent } from './donnees/prendre-cap-ecran/prendre-cap-ecran.component';
+import { CaptureIntelligenteComponent } from './donnees/capture-intelligente/capture-intelligente.component';
+import { PhotosComponent } from './donnees/photos/photos.component';
+import { ApercuVideoComponent } from './donnees/apercu-video/apercu-video.component';
+import { VoixComponent } from './donnees/voix/voix.component';
+import { DocumentsComponent } from './donnees/documents/documents.component';
+import { EmailComponent } from './donnees/email/email.component';
+import { ContactsComponent } from './donnees/contacts/contacts.component';
+import { HistoriqueComponent } from './donnees/historique/historique.component';
+import { PressePapiersComponent } from './donnees/presse-papiers/presse-papiers.component';
+import { EnregistreurWifiComponent } from './donnees/enregistreur-wifi/enregistreur-wifi.component';
+import { AppBlockComponent } from './donnees/app-block/app-block.component';
+import { TempsDarretComponent } from './donnees/temps-darret/temps-darret.component';
+import { ActiviteDapplicationComponent } from './donnees/activite-dapplication/activite-dapplication.component';
+import { WhatsappComponent } from './donnees/ApplicationSocial/whatsapp/whatsapp.component';
+import { FichiersDeWhatsappComponent } from './donnees/ApplicationSocial/fichiers-de-whatsapp/fichiers-de-whatsapp.component';
+import { LoginComponent } from './login/login.component';
+import { UserComponent } from './user/user.component';
+import { UserResolver } from './user/user.resolver';
 
 @NgModule({
   declarations: [
@@ -75,7 +86,6 @@ import { FichiersDeWhatsappComponent } from './Donnees/ApplicationSocial/fichier
     CalendriersComponent,
     EnregistreurDeFrappeComponent,
     ActiviteDapplicationComponent,
-    ApplicationSocialComponent,
     WhatsappComponent,
     FichiersDeWhatsappComponent,
     FacebookComponent,
@@ -93,14 +103,21 @@ import { FichiersDeWhatsappComponent } from './Donnees/ApplicationSocial/fichier
     TelegramComponent,
     MessengerLiteComponent,
     FacebookLiteComponent,
-    TumblrComponent
+    TumblrComponent,
+    LoginComponent,
+    UserComponent
   ],
   imports: [
+    // AngularFireModule.initializeApp(environment.firebase),
+    AngularFirestoreModule,
+    HttpClientModule,
+    AngularFireAuthModule,
     BrowserModule,
     AppRoutingModule,
     RouterModule.forRoot([
       { path: 'Messages', component: MessagesComponent },
       { path: 'Dashbord', component: DashbordComponent },
+      { path: 'login', component: LoginComponent },
       { path: '', component: DashbordComponent },
       { path: 'Whatsapp', component: WhatsappComponent },
       { path: 'Fichiers-de-Whatsapp', component: FichiersDeWhatsappComponent },
@@ -140,10 +157,11 @@ import { FichiersDeWhatsappComponent } from './Donnees/ApplicationSocial/fichier
       { path: 'Enregisteur-de-WIFI', component: EnregistreurWifiComponent },
       { path: 'App-Block', component: AppBlockComponent },
       { path: 'Temps-d\'arret', component: TempsDarretComponent },
-      { path: 'Activité-de-l\'application', component: ActiviteDapplicationComponent }
+      { path: 'Activité-de-l\'application', component: ActiviteDapplicationComponent },
+      { path: 'user', component: UserComponent, resolve: { data: UserResolver } }
     ])
   ],
-  providers: [],
+  providers: [AuthService, UserService, UserResolver, AuthGuard],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
